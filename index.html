@@ -12,10 +12,7 @@
     --text: #3d2c00;
     --sub: #8a6f3a;
     --accent: #e8913a;
-    --accent2: #d06020;
     --correct: #4caf50;
-    --wrong: #e05050;
-    --cancel: #a0a0a0;
     --selected-glow: #f7c060;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -34,41 +31,49 @@
   }
   .screen.active { display: flex; }
 
-  /* ========== MAIN SCREEN ========== */
+  /* ========== MAIN SCREEN ==========
+     上段: 商品エリア(左) ＋ ボタンエリア(右)
+     下段: さいふ
+  */
   #main-screen {
+    flex-direction: column;
+    padding: 6px 8px 6px;
+    gap: 6px;
+  }
+
+  /* --- 上段 --- */
+  #top-row {
+    display: flex;
     flex-direction: row;
     align-items: stretch;
-    padding: 6px 8px;
-    gap: 8px;
-  }
-
-  /* 左カラム: ボタン群 */
-  #left-col {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    align-items: flex-start;
-    justify-content: flex-start;
+    gap: 10px;
     flex-shrink: 0;
-    padding-top: 4px;
   }
 
-  /* 商品カード */
-  #product-card {
+  /* 商品エリア */
+  #product-area {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
     background: white;
     border: 2px solid var(--border);
     border-radius: 14px;
-    padding: 10px 14px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 6px;
+    padding: 8px 14px;
+    flex: 1;
+    min-width: 0;
+  }
+  #product-area-label {
+    font-size: 13px;
+    font-weight: bold;
+    color: var(--sub);
+    white-space: nowrap;
     flex-shrink: 0;
-    min-width: 100px;
   }
   #product-emoji {
     font-size: 52px;
     line-height: 1;
+    flex-shrink: 0;
   }
   #product-price {
     font-size: 22px;
@@ -79,62 +84,51 @@
     padding: 3px 10px;
     background: white;
     white-space: nowrap;
+    flex-shrink: 0;
   }
 
-  /* アクションボタン */
+  /* ボタンエリア */
+  #btn-col {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    align-items: stretch;
+    flex-shrink: 0;
+    min-width: 90px;
+    justify-content: center;
+  }
   .action-btn {
     font-family: inherit;
     font-size: 15px;
     font-weight: bold;
-    padding: 10px 16px;
+    padding: 10px 14px;
     border-radius: 22px;
     border: none;
     cursor: pointer;
     -webkit-tap-highlight-color: transparent;
     transition: transform 0.12s, opacity 0.12s;
-    width: 100%;
     text-align: center;
+    white-space: nowrap;
   }
   .action-btn:active { transform: scale(0.93); }
+  #btn-pay  { background: var(--accent); color: white; }
+  #btn-cant { background: #d8c8a0; color: var(--sub); }
+  #btn-back { background: #e8e0d0; color: var(--sub); font-size: 13px; padding: 8px 10px; }
 
-  #btn-pay {
-    background: var(--accent);
-    color: white;
-  }
-  #btn-pay.disabled {
-    background: #d0b880;
-    opacity: 0.6;
-    pointer-events: none;
-  }
-  #btn-cant {
-    background: #d8c8a0;
-    color: var(--sub);
-  }
-  #btn-back {
-    background: #e8e0d0;
-    color: var(--sub);
-    font-size: 13px;
-    padding: 8px 12px;
-  }
-
-  /* 右カラム: さいふ */
-  #wallet-col {
+  /* --- 下段: さいふ --- */
+  #wallet-section {
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 6px;
-    min-width: 0;
+    gap: 5px;
+    min-height: 0;
   }
-
   #wallet-title {
     font-size: 13px;
     font-weight: bold;
     color: var(--sub);
-    text-align: left;
     padding-left: 2px;
   }
-
-  /* さいふエリア */
   #wallet-area {
     flex: 1;
     background: var(--surface);
@@ -145,7 +139,8 @@
     padding: 6px 8px;
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 2px;
+    min-height: 0;
   }
 
   /* 金種行 */
@@ -154,9 +149,9 @@
     align-items: center;
     gap: 5px;
     flex-wrap: nowrap;
-    padding: 4px 2px;
+    padding: 3px 2px;
     border-bottom: 1px solid var(--border);
-    min-height: 52px;
+    min-height: 48px;
   }
   .denom-row:last-child { border-bottom: none; }
 
@@ -170,12 +165,9 @@
     position: relative;
     flex-shrink: 0;
     transition: transform 0.1s;
+    isolation: isolate;
   }
   .money-btn:active { transform: scale(0.88); }
-  .money-btn.selected svg circle:first-child,
-  .money-btn.selected svg rect:first-child {
-    filter: drop-shadow(0 0 6px var(--selected-glow));
-  }
   .money-btn.selected .coin-overlay,
   .money-btn.selected .note-overlay {
     opacity: 1;
@@ -184,10 +176,11 @@
     position: absolute;
     top: 0; left: 0; width: 100%; height: 100%;
     border-radius: 50%;
-    background: rgba(247,192,96,0.38);
+    background: rgba(247,192,96,0.45);
     pointer-events: none;
     opacity: 0;
     transition: opacity 0.15s;
+    z-index: 2;
   }
   .note-overlay { border-radius: 6px; }
 
@@ -197,94 +190,53 @@
     60%  { transform: scale(0.7) translateY(-30px); opacity: 0.7; }
     100% { transform: scale(0.3) translateY(-80px); opacity: 0; }
   }
-  .money-btn.paying {
-    animation: flyPay 0.45s ease forwards;
-  }
+  .money-btn.paying { animation: flyPay 0.45s ease forwards; }
 
   /* 出しているおかね欄 */
   #paying-area {
     background: #f0e8d0;
     border: 1.5px solid var(--border);
     border-radius: 12px;
-    padding: 5px 10px;
+    padding: 4px 10px;
     display: flex;
     align-items: center;
     gap: 8px;
     flex-shrink: 0;
-    min-height: 38px;
+    min-height: 34px;
   }
-  #paying-label {
-    font-size: 12px;
-    color: var(--sub);
-    flex-shrink: 0;
-  }
-  #paying-amount {
-    font-size: 20px;
-    font-weight: bold;
-    color: var(--text);
-  }
+  #paying-label { font-size: 12px; color: var(--sub); flex-shrink: 0; }
+  #paying-amount { font-size: 18px; font-weight: bold; color: var(--text); }
 
   /* トースト */
   #toast {
-    position: fixed;
-    top: 50%;
-    left: 50%;
+    position: fixed; top: 50%; left: 50%;
     transform: translate(-50%, -50%) scale(0.6);
     background: rgba(50,30,0,0.88);
-    color: #fff;
-    font-size: 28px;
-    font-weight: bold;
-    padding: 18px 36px;
-    border-radius: 24px;
-    pointer-events: none;
-    opacity: 0;
-    z-index: 300;
+    color: #fff; font-size: 28px; font-weight: bold;
+    padding: 18px 36px; border-radius: 24px;
+    pointer-events: none; opacity: 0; z-index: 300;
     transition: opacity 0.2s, transform 0.2s;
     white-space: nowrap;
   }
-  #toast.show {
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(1);
-  }
+  #toast.show { opacity: 1; transform: translate(-50%, -50%) scale(1); }
 
   /* おつり表示 */
   #change-overlay {
-    position: fixed;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(253,246,227,0.94);
-    display: none;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 16px;
-    z-index: 400;
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(253,246,227,0.95);
+    display: none; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 12px; z-index: 400;
   }
   #change-overlay.show { display: flex; }
-  #change-title {
-    font-size: 22px;
-    font-weight: bold;
-    color: var(--correct);
-  }
-  #change-amount {
-    font-size: 46px;
-    font-weight: bold;
-    color: var(--text);
-  }
-  #change-sub {
-    font-size: 15px;
-    color: var(--sub);
-  }
+  #change-title  { font-size: 24px; font-weight: bold; color: var(--correct); }
+  #change-sub    { font-size: 16px; color: var(--sub); }
+  #change-amount { font-size: 50px; font-weight: bold; color: var(--text); }
   #btn-get-change {
-    background: var(--correct);
-    color: white;
-    font-family: inherit;
-    font-size: 18px;
-    font-weight: bold;
-    padding: 14px 40px;
-    border: none;
-    border-radius: 30px;
-    cursor: pointer;
-    -webkit-tap-highlight-color: transparent;
+    background: var(--correct); color: white;
+    font-family: inherit; font-size: 18px; font-weight: bold;
+    padding: 14px 40px; border: none; border-radius: 30px;
+    cursor: pointer; -webkit-tap-highlight-color: transparent;
   }
 
   /* 歯車 */
@@ -299,113 +251,51 @@
 
   /* ========== SETTINGS SCREEN ========== */
   #settings-screen {
-    flex-direction: column;
-    align-items: center;
-    padding: 14px 12px;
-    gap: 10px;
-    overflow-y: auto;
+    flex-direction: column; align-items: center;
+    padding: 14px 12px; gap: 10px; overflow-y: auto;
   }
-  #settings-title-bar {
-    font-size: 18px;
-    font-weight: bold;
-    color: var(--text);
-  }
+  #settings-title-bar { font-size: 18px; font-weight: bold; color: var(--text); }
   .s-card {
     width: 100%; max-width: 560px;
     background: var(--surface);
-    border: 2px solid var(--border);
-    border-radius: 14px;
+    border: 2px solid var(--border); border-radius: 14px;
     padding: 10px 12px;
   }
-  .s-card h3 {
-    font-size: 12px;
-    color: var(--sub);
-    margin-bottom: 8px;
-  }
+  .s-card h3 { font-size: 12px; color: var(--sub); margin-bottom: 8px; }
   .s-row {
-    display: flex;
-    align-items: center;
+    display: flex; align-items: center;
     justify-content: space-between;
-    padding: 5px 0;
-    border-bottom: 1px solid var(--border);
-    gap: 8px;
-    flex-wrap: wrap;
+    padding: 5px 0; border-bottom: 1px solid var(--border);
+    gap: 8px; flex-wrap: wrap;
   }
   .s-row:last-child { border-bottom: none; }
   .s-lbl {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 14px;
-    font-weight: bold;
-    color: var(--text);
-    flex-shrink: 0;
+    display: flex; align-items: center;
+    gap: 6px; font-size: 14px; font-weight: bold; color: var(--text); flex-shrink: 0;
   }
   .s-ctrl { display: flex; align-items: center; gap: 3px; }
   .step-btn {
-    width: 28px; height: 28px;
-    border-radius: 50%;
-    border: 2px solid var(--border);
-    background: white;
-    font-size: 16px;
-    cursor: pointer;
-    font-family: inherit;
-    color: var(--text);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    width: 28px; height: 28px; border-radius: 50%;
+    border: 2px solid var(--border); background: white;
+    font-size: 16px; cursor: pointer; font-family: inherit; color: var(--text);
+    display: flex; align-items: center; justify-content: center;
     -webkit-tap-highlight-color: transparent;
   }
   .step-btn:active { background: #fff0cc; }
-  .s-val {
-    font-size: 15px;
-    font-weight: bold;
-    color: var(--text);
-    min-width: 24px;
-    text-align: center;
-  }
-  .s-range-lbl {
-    font-size: 12px;
-    color: var(--sub);
-    margin: 0 2px;
-    white-space: nowrap;
-  }
-
-  /* きざみ選択 */
-  .kizami-group {
-    display: flex;
-    gap: 6px;
-    flex-wrap: wrap;
-    margin-top: 4px;
-  }
+  .s-val { font-size: 15px; font-weight: bold; color: var(--text); min-width: 24px; text-align: center; }
+  .s-range-lbl { font-size: 12px; color: var(--sub); margin: 0 2px; white-space: nowrap; }
+  .kizami-group { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px; }
   .kizami-btn {
-    padding: 6px 14px;
-    border-radius: 16px;
-    border: 2px solid var(--border);
-    background: white;
-    font-size: 13px;
-    font-weight: bold;
-    color: var(--sub);
-    cursor: pointer;
-    font-family: inherit;
-    -webkit-tap-highlight-color: transparent;
+    padding: 6px 14px; border-radius: 16px;
+    border: 2px solid var(--border); background: white;
+    font-size: 13px; font-weight: bold; color: var(--sub);
+    cursor: pointer; font-family: inherit; -webkit-tap-highlight-color: transparent;
   }
-  .kizami-btn.active {
-    background: var(--accent);
-    border-color: var(--accent);
-    color: white;
-  }
-
+  .kizami-btn.active { background: var(--accent); border-color: var(--accent); color: white; }
   #s-back-btn {
-    padding: 10px 44px;
-    background: var(--accent);
-    color: white;
-    border: none;
-    border-radius: 22px;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-    font-family: inherit;
+    padding: 10px 44px; background: var(--accent); color: white;
+    border: none; border-radius: 22px;
+    font-size: 16px; font-weight: bold; cursor: pointer; font-family: inherit;
   }
 </style>
 </head>
@@ -414,21 +304,26 @@
 <!-- ========== MAIN ========== -->
 <div id="main-screen" class="screen active">
 
-  <!-- 左: 商品＋ボタン -->
-  <div id="left-col">
-    <div id="product-card">
+  <!-- 上段 -->
+  <div id="top-row">
+    <!-- 商品 -->
+    <div id="product-area">
+      <div id="product-area-label">ほしいもの</div>
       <div id="product-emoji">🍩</div>
       <div id="product-price">120円</div>
     </div>
-    <button class="action-btn" id="btn-pay" onclick="doPayment()">しはらう</button>
-    <button class="action-btn" id="btn-cant" onclick="doCant()">かえない</button>
-    <button class="action-btn" id="btn-back" onclick="undoSelection()">もどる</button>
+    <!-- ボタン群 -->
+    <div id="btn-col">
+      <button class="action-btn" id="btn-pay"  id="btn-pay">しはらう</button>
+      <button class="action-btn" id="btn-cant" id="btn-cant">かえない</button>
+      <button class="action-btn" id="btn-back" id="btn-back">もどる</button>
+    </div>
   </div>
 
-  <!-- 右: さいふ -->
-  <div id="wallet-col">
+  <!-- 下段: さいふ -->
+  <div id="wallet-section">
     <div id="wallet-title">さいふのなか</div>
-    <div id="wallet-area" id="wallet-area"></div>
+    <div id="wallet-area"></div>
     <div id="paying-area">
       <div id="paying-label">えらんだおかね</div>
       <div id="paying-amount">0円</div>
@@ -439,37 +334,35 @@
 <!-- ========== おつり ========== -->
 <div id="change-overlay">
   <div id="change-title">かえたよ！</div>
-  <div id="change-sub" id="change-sub"></div>
+  <div id="change-sub"></div>
   <div id="change-amount"></div>
-  <button id="btn-get-change" onclick="receiveChange()">おつりをもらう</button>
+  <button id="btn-get-change">おつりをもらう</button>
 </div>
 
 <!-- ========== SETTINGS ========== -->
 <div id="settings-screen" class="screen">
   <div id="settings-title-bar">せってい</div>
-
   <div class="s-card">
     <h3>さいふのなかのおかね（まいすう）</h3>
     <div id="s-wallet-rows"></div>
   </div>
-
   <div class="s-card">
     <h3>ほしいものの ねだん</h3>
     <div class="s-row">
       <div class="s-lbl">下限</div>
       <div class="s-ctrl">
-        <button class="step-btn" onclick="changeMinPrice(-1)">－</button>
+        <button class="step-btn" id="s-min-minus">－</button>
         <div class="s-val" id="s-min-price">100</div>
-        <button class="step-btn" onclick="changeMinPrice(+1)">＋</button>
+        <button class="step-btn" id="s-min-plus">＋</button>
         <span class="s-range-lbl">円</span>
       </div>
     </div>
     <div class="s-row">
       <div class="s-lbl">上限</div>
       <div class="s-ctrl">
-        <button class="step-btn" onclick="changeMaxPrice(-1)">－</button>
+        <button class="step-btn" id="s-max-minus">－</button>
         <div class="s-val" id="s-max-price">800</div>
-        <button class="step-btn" onclick="changeMaxPrice(+1)">＋</button>
+        <button class="step-btn" id="s-max-plus">＋</button>
         <span class="s-range-lbl">円</span>
       </div>
     </div>
@@ -478,15 +371,12 @@
       <div class="kizami-group" id="kizami-group"></div>
     </div>
   </div>
-
-  <button id="s-back-btn" onclick="closeSettings()">もどる</button>
+  <button id="s-back-btn">もどる</button>
 </div>
 
-<!-- トースト -->
 <div id="toast"></div>
 
-<!-- 歯車 -->
-<button id="gear-btn" onclick="openSettings()">
+<button id="gear-btn">
   <svg viewBox="0 0 24 24" fill="none" stroke="#555" stroke-width="1.8" width="32" height="32">
     <circle cx="12" cy="12" r="3"/>
     <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
@@ -494,7 +384,6 @@
 </button>
 
 <script>
-// ========== 設定 ==========
 const DENOMS = [
   { val: 1000, label: '1000円', type: 'note' },
   { val: 500,  label: '500円',  type: 'coin' },
@@ -505,30 +394,15 @@ const DENOMS = [
   { val: 1,    label: '1円',    type: 'coin' },
 ];
 
-// wallet[val] = count
-let wallet = {
-  1000: 1,
-  500:  2,
-  100:  2,
-  50:   2,
-  10:   4,
-  5:    0,
-  1:    0,
-};
-
-let minPrice = 100;
-let maxPrice = 800;
-let kizami   = 10;
+let wallet = { 1000:1, 500:2, 100:2, 50:2, 10:4, 5:0, 1:0 };
+let minPrice = 100, maxPrice = 800, kizami = 10;
 const KIZAMI_OPTIONS = [1, 10, 50, 100];
-
 let currentPrice = 0;
-let currentEmoji = '';
-
-// 選択中のコイン: [{val, uid}]
 let selected = [];
 let busy = false;
+let uidCounter = 0;
+let moneySlots = [];
 
-// 商品リスト
 const PRODUCTS = [
   ['🍩','ドーナツ'],['🍪','クッキー'],['🍭','キャンディ'],['🍫','チョコレート'],
   ['🧃','ジュース'],['🍞','パン'],['🍙','おにぎり'],['🥪','サンドイッチ'],
@@ -540,10 +414,10 @@ const PRODUCTS = [
 // ========== SVG ==========
 function coinSVG(val, size) {
   const C = {
-    1:   { bg:'#b2b2b2', inner:'#d4d4d4', rim:'#444', text:'1',   hole:false },
-    5:   { bg:'#c8a84b', inner:'#e0c060', rim:'#5a3a00', text:'5', hole:true  },
-    10:  { bg:'#b87333', inner:'#d4946a', rim:'#4a1800', text:'10', hole:false },
-    50:  { bg:'#b0b0b0', inner:'#d0d0d0', rim:'#333', text:'50',  hole:true  },
+    1:   { bg:'#b2b2b2', inner:'#d4d4d4', rim:'#444',    text:'1',   hole:false },
+    5:   { bg:'#c8a84b', inner:'#e0c060', rim:'#5a3a00', text:'5',   hole:true  },
+    10:  { bg:'#b87333', inner:'#d4946a', rim:'#4a1800', text:'10',  hole:false },
+    50:  { bg:'#b0b0b0', inner:'#d0d0d0', rim:'#333',    text:'50',  hole:true  },
     100: { bg:'#a8a8a8', inner:'#c8c8c8', rim:'#2a2a2a', text:'100', hole:false },
     500: { bg:'#a0a8b0', inner:'#c0c8d0', rim:'#1a3060', text:'500', hole:false },
   };
@@ -552,13 +426,16 @@ function coinSVG(val, size) {
   const holeR = size * 0.11;
   const ts = val >= 100 ? size*0.26 : val >= 10 ? size*0.30 : size*0.36;
   const textY = c.hole ? r*0.52 + ts*0.38 : r + ts*0.38;
-  const hole = c.hole ? `<circle cx="${r}" cy="${r}" r="${holeR}" fill="#fff8e7" stroke="${c.rim}" stroke-width="1.2"/>` : '';
+  const hole = c.hole
+    ? `<circle cx="${r}" cy="${r}" r="${holeR}" fill="#fff8e7" stroke="${c.rim}" stroke-width="1.2"/>`
+    : '';
   return `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" xmlns="http://www.w3.org/2000/svg">
   <circle cx="${r}" cy="${r}" r="${r-1}" fill="${c.rim}"/>
   <circle cx="${r}" cy="${r}" r="${r-3}" fill="${c.bg}"/>
   <circle cx="${r}" cy="${r}" r="${r-5}" fill="${c.inner}" opacity="0.5"/>
   ${hole}
-  <text x="${r}" y="${textY}" text-anchor="middle" font-size="${ts}" font-weight="900" fill="${c.rim}" font-family="BIZ UDPGothic,sans-serif">${c.text}</text>
+  <text x="${r}" y="${textY}" text-anchor="middle" font-size="${ts}" font-weight="900"
+    fill="${c.rim}" font-family="BIZ UDPGothic,sans-serif">${c.text}</text>
 </svg>`;
 }
 
@@ -573,84 +450,66 @@ function noteSVG(val, w, h) {
   <rect x="1" y="1" width="${w-2}" height="${h-2}" rx="5" fill="${c.border}"/>
   <rect x="3" y="3" width="${w-6}" height="${h-6}" rx="4" fill="${c.bg}"/>
   <rect x="6" y="6" width="${w-12}" height="${h-12}" rx="3" fill="${c.inner}" opacity="0.55"/>
-  <text x="${w*0.5}" y="${h*0.63}" text-anchor="middle" font-size="${ts}" font-weight="900" fill="${c.border}" font-family="BIZ UDPGothic,sans-serif">${c.text}</text>
+  <text x="${w*0.5}" y="${h*0.63}" text-anchor="middle" font-size="${ts}" font-weight="900"
+    fill="${c.border}" font-family="BIZ UDPGothic,sans-serif">${c.text}</text>
 </svg>`;
 }
 
 // ========== 商品生成 ==========
 function generateProduct() {
   const p = PRODUCTS[Math.floor(Math.random() * PRODUCTS.length)];
-  currentEmoji = p[0];
-  // きざみに合わせた価格
   const stepsMin = Math.ceil(minPrice / kizami);
   const stepsMax = Math.floor(maxPrice / kizami);
-  const steps = Math.max(stepsMin, 1);
-  const stepsRange = Math.max(stepsMax - stepsMin + 1, 1);
-  currentPrice = (stepsMin + Math.floor(Math.random() * stepsRange)) * kizami;
-  // 最低1円以上
+  const range = Math.max(stepsMax - stepsMin + 1, 1);
+  currentPrice = (stepsMin + Math.floor(Math.random() * range)) * kizami;
   if (currentPrice < 1) currentPrice = kizami;
-
-  document.getElementById('product-emoji').textContent = currentEmoji;
+  document.getElementById('product-emoji').textContent = p[0];
   document.getElementById('product-price').textContent = currentPrice + '円';
 }
 
 // ========== さいふ描画 ==========
-let uidCounter = 0;
-// slot情報: { val, uid, btn }
-let moneySlots = [];
-
 function renderWallet() {
   const area = document.getElementById('wallet-area');
   area.innerHTML = '';
   moneySlots = [];
+  const coinSize = 44, noteW = 72, noteH = 42;
 
-  // 利用可能な金種フィルタ
-  const denomsToShow = DENOMS.filter(d => wallet[d.val] !== undefined);
-
-  // エリアの高さを金種数で分割
-  const denomCount = denomsToShow.filter(d => wallet[d.val] > 0 || true).length;
-
-  for (const d of denomsToShow) {
+  for (const d of DENOMS) {
     const count = wallet[d.val] || 0;
     const row = document.createElement('div');
     row.className = 'denom-row';
     row.dataset.val = d.val;
 
-    // サイズ決め
-    const isNote = d.type === 'note';
-    // 行の高さから逆算
-    const coinSize = 44;
-    const noteW = 72;
-    const noteH = 42;
-
     for (let i = 0; i < count; i++) {
       const uid = ++uidCounter;
       const btn = document.createElement('button');
       btn.className = 'money-btn';
-      btn.dataset.val = d.val;
       btn.dataset.uid = uid;
 
+      const isNote = d.type === 'note';
       if (isNote) {
-        btn.style.width = noteW + 'px';
-        btn.style.height = noteH + 'px';
+        btn.style.cssText = `width:${noteW}px;height:${noteH}px`;
         btn.innerHTML = noteSVG(d.val, noteW, noteH);
         const ov = document.createElement('div');
         ov.className = 'note-overlay';
         btn.appendChild(ov);
       } else {
-        btn.style.width = coinSize + 'px';
-        btn.style.height = coinSize + 'px';
+        btn.style.cssText = `width:${coinSize}px;height:${coinSize}px`;
         btn.innerHTML = coinSVG(d.val, coinSize);
         const ov = document.createElement('div');
         ov.className = 'coin-overlay';
         btn.appendChild(ov);
       }
 
-      btn.addEventListener('click', () => toggleMoney(d.val, uid, btn));
+      // pointerdown で確実に反応（Safari file:// 対応）
+      btn.addEventListener('pointerdown', (e) => {
+        e.preventDefault();
+        toggleMoney(d.val, uid, btn);
+      });
+
       row.appendChild(btn);
       moneySlots.push({ val: d.val, uid, btn });
     }
-
     area.appendChild(row);
   }
 }
@@ -660,11 +519,9 @@ function toggleMoney(val, uid, btn) {
   if (busy) return;
   const idx = selected.findIndex(s => s.uid === uid);
   if (idx >= 0) {
-    // 解除
     selected.splice(idx, 1);
     btn.classList.remove('selected');
   } else {
-    // 選択
     selected.push({ val, uid, btn });
     btn.classList.add('selected');
   }
@@ -677,7 +534,7 @@ function updatePayingDisplay() {
 }
 
 function undoSelection() {
-  // 選択を全解除
+  if (busy) return;
   for (const s of selected) s.btn.classList.remove('selected');
   selected = [];
   updatePayingDisplay();
@@ -687,18 +544,12 @@ function undoSelection() {
 function doPayment() {
   if (busy) return;
   const total = selected.reduce((s, x) => s + x.val, 0);
+  if (total < currentPrice) { showToast('たりないよ', 1600); return; }
 
-  if (total < currentPrice) {
-    // 足りない
-    showToast('たりないよ', 1600);
-    return;
-  }
-
-  // 払えた
   busy = true;
   const change = total - currentPrice;
+  playCharin();
 
-  // アニメーション
   const promises = selected.map((s, i) => new Promise(resolve => {
     setTimeout(() => {
       s.btn.classList.remove('selected');
@@ -707,10 +558,7 @@ function doPayment() {
     }, i * 60);
   }));
 
-  playCharin();
-
   Promise.all(promises).then(() => {
-    // walletから引く
     for (const s of selected) {
       wallet[s.val] = Math.max(0, (wallet[s.val] || 0) - 1);
     }
@@ -720,47 +568,29 @@ function doPayment() {
     updatePayingDisplay();
 
     if (change > 0) {
-      // おつり表示
       showChangeOverlay(change);
     } else {
-      // ぴったり
       checkWalletEmpty();
     }
   });
 }
 
+// ========== おつり ==========
 function showChangeOverlay(change) {
   document.getElementById('change-amount').textContent = change + '円';
-  // おつりの内訳（オプション）
-  const breakdown = makeChangeBreakdown(change);
-  document.getElementById('change-sub').textContent = 'おつりは ' + breakdown;
+  document.getElementById('change-sub').textContent = 'おつりは ' + change + '円';
   document.getElementById('change-overlay').classList.add('show');
 }
 
-function makeChangeBreakdown(amount) {
-  const denomVals = [500, 100, 50, 10, 5, 1];
-  let rest = amount;
-  const parts = [];
-  for (const v of denomVals) {
-    const n = Math.floor(rest / v);
-    if (n > 0) { parts.push(v + '円×' + n); rest -= v * n; }
-  }
-  return parts.join('、') || '0円';
-}
-
 function receiveChange() {
-  const changeEl = document.getElementById('change-amount');
-  const change = parseInt(changeEl.textContent);
+  const change = parseInt(document.getElementById('change-amount').textContent);
   document.getElementById('change-overlay').classList.remove('show');
-
-  // おつりをwalletに追加
   const denomVals = [500, 100, 50, 10, 5, 1];
   let rest = change;
   for (const v of denomVals) {
     const n = Math.floor(rest / v);
     if (n > 0) { wallet[v] = (wallet[v] || 0) + n; rest -= v * n; }
   }
-
   renderWallet();
   checkWalletEmpty();
 }
@@ -769,17 +599,13 @@ function checkWalletEmpty() {
   const total = Object.values(wallet).reduce((s, c) => s + c, 0);
   if (total === 0) {
     showToast('おかねがなくなったよ', 2000, () => {
-      resetWallet();
-      generateProduct();
+      wallet = { 1000:1, 500:2, 100:2, 50:2, 10:4, 5:0, 1:0 };
       renderWallet();
+      generateProduct();
     });
     return;
   }
   generateProduct();
-}
-
-function resetWallet() {
-  wallet = { 1000:1, 500:2, 100:2, 50:2, 10:4, 5:0, 1:0 };
 }
 
 // ========== かえない ==========
@@ -787,11 +613,9 @@ function doCant() {
   if (busy) return;
   const walletTotal = Object.entries(wallet).reduce((s, [v, c]) => s + Number(v)*c, 0);
   if (walletTotal >= currentPrice) {
-    // 間違い: 払えるのに「かえない」を押した
     showToast('かえるよ！', 1400);
     return;
   }
-  // 正解
   busy = true;
   playCorrect();
   showToast('そうだね！', 1400, () => {
@@ -819,12 +643,10 @@ function getACtx() {
   if (audioCtx.state === 'suspended') audioCtx.resume();
   return audioCtx;
 }
-
 function playCharin() {
-  const ctx = getACtx(); const t = ctx.currentTime;
-  // チャリーン: 高音3連
+  const ctx = getACtx(), t = ctx.currentTime;
   [[1200,t,0.15],[1500,t+0.1,0.15],[1800,t+0.2,0.15]].forEach(([freq,start,dur]) => {
-    const o = ctx.createOscillator(); const g = ctx.createGain();
+    const o = ctx.createOscillator(), g = ctx.createGain();
     o.type = 'sine'; o.frequency.value = freq;
     g.gain.setValueAtTime(0, start);
     g.gain.linearRampToValueAtTime(0.25, start+0.02);
@@ -833,11 +655,10 @@ function playCharin() {
     o.start(start); o.stop(start+dur+0.02);
   });
 }
-
 function playCorrect() {
-  const ctx = getACtx(); const t = ctx.currentTime;
+  const ctx = getACtx(), t = ctx.currentTime;
   [[880,t,0.18],[1100,t+0.22,0.18]].forEach(([freq,start,dur]) => {
-    const o = ctx.createOscillator(); const g = ctx.createGain();
+    const o = ctx.createOscillator(), g = ctx.createGain();
     o.type = 'sine'; o.frequency.value = freq;
     g.gain.setValueAtTime(0, start);
     g.gain.linearRampToValueAtTime(0.28, start+0.03);
@@ -853,7 +674,6 @@ function openSettings() {
   document.getElementById('main-screen').classList.remove('active');
   document.getElementById('settings-screen').classList.add('active');
 }
-
 function closeSettings() {
   document.getElementById('settings-screen').classList.remove('active');
   document.getElementById('main-screen').classList.add('active');
@@ -862,80 +682,101 @@ function closeSettings() {
   updatePayingDisplay();
   generateProduct();
 }
-
 function buildSettingsUI() {
-  // さいふ
   const wr = document.getElementById('s-wallet-rows');
   wr.innerHTML = '';
   for (const d of DENOMS) {
-    const row = document.createElement('div');
-    row.className = 's-row';
     const isNote = d.type === 'note';
     const thumb = isNote ? noteSVG(d.val, 48, 28) : coinSVG(d.val, 28);
+    const row = document.createElement('div');
+    row.className = 's-row';
     row.innerHTML = `
       <div class="s-lbl">${thumb}<span>${d.label}</span></div>
       <div class="s-ctrl">
-        <button class="step-btn" onclick="changeWallet(${d.val},-1)">－</button>
+        <button class="step-btn" data-action="wdec" data-val="${d.val}">－</button>
         <div class="s-val" id="sw-${d.val}">${wallet[d.val]||0}</div>
-        <button class="step-btn" onclick="changeWallet(${d.val},+1)">＋</button>
+        <button class="step-btn" data-action="winc" data-val="${d.val}">＋</button>
         <span class="s-range-lbl">まい</span>
       </div>`;
     wr.appendChild(row);
   }
-
-  // 価格
   document.getElementById('s-min-price').textContent = minPrice;
   document.getElementById('s-max-price').textContent = maxPrice;
 
-  // きざみ
   const kg = document.getElementById('kizami-group');
   kg.innerHTML = '';
   for (const k of KIZAMI_OPTIONS) {
     const btn = document.createElement('button');
     btn.className = 'kizami-btn' + (k === kizami ? ' active' : '');
     btn.textContent = k + '円';
-    btn.onclick = () => {
-      kizami = k;
-      kg.querySelectorAll('.kizami-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      // 価格をきざみに合わせて補正
-      minPrice = Math.round(minPrice / kizami) * kizami || kizami;
-      maxPrice = Math.round(maxPrice / kizami) * kizami || kizami;
-      if (minPrice < kizami) minPrice = kizami;
-      if (maxPrice < minPrice) maxPrice = minPrice;
-      document.getElementById('s-min-price').textContent = minPrice;
-      document.getElementById('s-max-price').textContent = maxPrice;
-    };
+    btn.dataset.kizami = k;
     kg.appendChild(btn);
   }
 }
 
-function changeWallet(val, delta) {
-  wallet[val] = Math.max(0, Math.min(10, (wallet[val]||0) + delta));
-  const el = document.getElementById('sw-' + val);
-  if (el) el.textContent = wallet[val];
-}
+// ========== イベント登録（DOMContentLoaded後に一括） ==========
+document.addEventListener('DOMContentLoaded', () => {
+  // メインボタン
+  document.getElementById('btn-pay').addEventListener('click', doPayment);
+  document.getElementById('btn-cant').addEventListener('click', doCant);
+  document.getElementById('btn-back').addEventListener('click', undoSelection);
+  document.getElementById('btn-get-change').addEventListener('click', receiveChange);
+  document.getElementById('gear-btn').addEventListener('click', openSettings);
+  document.getElementById('s-back-btn').addEventListener('click', closeSettings);
 
-function changeMinPrice(delta) {
-  minPrice = Math.max(kizami, minPrice + delta * kizami);
-  if (minPrice > maxPrice) maxPrice = minPrice;
-  document.getElementById('s-min-price').textContent = minPrice;
-  document.getElementById('s-max-price').textContent = maxPrice;
-}
+  // 価格上下限ボタン
+  document.getElementById('s-min-minus').addEventListener('click', () => changeMinPrice(-1));
+  document.getElementById('s-min-plus').addEventListener('click',  () => changeMinPrice(+1));
+  document.getElementById('s-max-minus').addEventListener('click', () => changeMaxPrice(-1));
+  document.getElementById('s-max-plus').addEventListener('click',  () => changeMaxPrice(+1));
 
-function changeMaxPrice(delta) {
-  maxPrice = Math.max(minPrice, maxPrice + delta * kizami);
-  document.getElementById('s-max-price').textContent = maxPrice;
-}
+  // 設定行内ボタン（イベント委譲）
+  document.getElementById('s-wallet-rows').addEventListener('click', (e) => {
+    const btn = e.target.closest('[data-action]');
+    if (!btn) return;
+    const val = Number(btn.dataset.val);
+    const delta = btn.dataset.action === 'winc' ? 1 : -1;
+    wallet[val] = Math.max(0, Math.min(10, (wallet[val]||0) + delta));
+    const el = document.getElementById('sw-' + val);
+    if (el) el.textContent = wallet[val];
+  });
 
-// ========== 初期化 ==========
-window.addEventListener('load', () => {
+  // きざみボタン（イベント委譲）
+  document.getElementById('kizami-group').addEventListener('click', (e) => {
+    const btn = e.target.closest('[data-kizami]');
+    if (!btn) return;
+    kizami = Number(btn.dataset.kizami);
+    document.querySelectorAll('.kizami-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    minPrice = Math.max(kizami, Math.round(minPrice / kizami) * kizami);
+    maxPrice = Math.max(minPrice, Math.round(maxPrice / kizami) * kizami);
+    document.getElementById('s-min-price').textContent = minPrice;
+    document.getElementById('s-max-price').textContent = maxPrice;
+  });
+
+  // 初期化
   setTimeout(() => {
     generateProduct();
     renderWallet();
     updatePayingDisplay();
   }, 50);
 });
+
+function changeWallet(val, delta) {
+  wallet[val] = Math.max(0, Math.min(10, (wallet[val]||0) + delta));
+  const el = document.getElementById('sw-' + val);
+  if (el) el.textContent = wallet[val];
+}
+function changeMinPrice(delta) {
+  minPrice = Math.max(kizami, minPrice + delta * kizami);
+  if (minPrice > maxPrice) maxPrice = minPrice;
+  document.getElementById('s-min-price').textContent = minPrice;
+  document.getElementById('s-max-price').textContent = maxPrice;
+}
+function changeMaxPrice(delta) {
+  maxPrice = Math.max(minPrice, maxPrice + delta * kizami);
+  document.getElementById('s-max-price').textContent = maxPrice;
+}
 </script>
 </body>
 </html>
